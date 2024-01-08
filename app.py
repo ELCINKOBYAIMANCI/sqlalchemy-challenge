@@ -107,8 +107,9 @@ def stations():
 @app.route('/api/v1.0/<start>')
 def get_start(start):
     session = Session(engine)
+    start_day= '2010-01-01'
     queryresult = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
-        filter(Measurement.date >= start).all()
+        filter(Measurement.date >= start_day).all()
     session.close()
 
     tobs = []
@@ -124,8 +125,11 @@ def get_start(start):
 @app.route('/api/v1.0/<start>/<end>')
 def start_end(start,end):
     session = Session(engine)
+    end_day= '2017-08-23'
+    start_day= '2010-01-01'
     queryresult = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
-        filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+        filter(Measurement.date >= start_day).filter(Measurement.date <= end_day).all()
+
     session.close()
 
     tobs= []
@@ -134,7 +138,7 @@ def start_end(start,end):
         tobs_dict["Min"] = min
         tobs_dict["Average"] = avg
         tobs_dict["Max"] = max
-        tobsall.append(tobs_dict)
+        tobs.append(tobs_dict)
 
     return jsonify(tobs)
 
