@@ -1,5 +1,5 @@
 import sqlalchemy
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import datetime as dt
 import numpy as np
 from sqlalchemy.ext.automap import automap_base
@@ -105,30 +105,30 @@ def stations():
     return jsonify(stations)
 
 @app.route('/api/v1.0/<start>')
-def get_t_start(start):
+def get_start(start):
     session = Session(engine)
     queryresult = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
         filter(Measurement.date >= start).all()
     session.close()
 
-    tobsall = []
+    tobs = []
     for min,avg,max in queryresult:
         tobs_dict = {}
         tobs_dict["Min"] = min
         tobs_dict["Average"] = avg
         tobs_dict["Max"] = max
-        tobsall.append(tobs_dict)
+        tobs.append(tobs_dict)
 
-    return jsonify(tobsall)
+    return jsonify(tobs)
 
 @app.route('/api/v1.0/<start>/<end>')
-def get_t_start_stop(start,end):
+def start_end(start,end):
     session = Session(engine)
     queryresult = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
         filter(Measurement.date >= start).filter(Measurement.date <= end).all()
     session.close()
 
-    tobsall = []
+    tobs= []
     for min,avg,max in queryresult:
         tobs_dict = {}
         tobs_dict["Min"] = min
@@ -136,8 +136,7 @@ def get_t_start_stop(start,end):
         tobs_dict["Max"] = max
         tobsall.append(tobs_dict)
 
-    return jsonify(tobsall)
-
+    return jsonify(tobs)
 
 
 if __name__ == '__main__':
